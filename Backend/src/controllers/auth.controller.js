@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require("bcryptjs")
 const asyncHandler  = require('express-async-handler')
 
+
+
+
 const registerUser  = asyncHandler(async(req,res)=>{
       const {username,email,password} = req.body;
 
@@ -55,16 +58,15 @@ const loginUser = asyncHandler(async(req,res)=>{
       {username},
       {email}
     ]
-  })
+  }).select("+password")
 
-   console.log("User found:", user);
+  
      if(!user){
       return res.status(400).json({
         message:"Invalid credentials"
       })
      }
-     console.log("Entered password:", password);
-console.log("Stored hash:", user.password);
+    
 
      const isPasswordValid = await bcrypt.compare(password,user.password)
      console.log("Password valid:", isPasswordValid);
@@ -98,8 +100,21 @@ console.log("Stored hash:", user.password);
     })
 })
 
+const getMe = asyncHandler(async (req,res)=>{
+      const userId = req.user.id
+
+      const user = await userModel.findById(userId).select("-password")
+
+      res.status(200).json({
+        message:"User fetched successfully",
+        user
+      })
+
+})
+
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getMe
 }
