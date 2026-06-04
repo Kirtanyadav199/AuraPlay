@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser')
 const asyncHandler =  require('express-async-handler')
 const authRouter = require('./routes/auth.routes')
 
+
 const app = express()
 
 app.use(express.json())
