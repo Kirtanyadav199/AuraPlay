@@ -2,7 +2,7 @@ const userModel = require('../models/users.model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require("bcryptjs")
 const asyncHandler  = require('express-async-handler')
-
+const blacklistModel = require('../models/blacklist.model')
 
 
 
@@ -112,9 +112,26 @@ const getMe = asyncHandler(async (req,res)=>{
 
 })
 
+const logoutUser = asyncHandler(async(req,res)=>{
+  const token = req.cookies.token
+
+  res.clearCookie("token")
+
+  await blacklistModel.create({
+    token
+  })
+
+  res.status(200).json({
+    message:"Logout successfully"
+  })
+})
+
+
+
 
 module.exports = {
     registerUser,
     loginUser,
-    getMe
+    getMe,
+    logoutUser
 }
